@@ -1,5 +1,5 @@
 /* ===============================
-   Styles généraux
+   Styles gÃ©nÃ©raux
 ================================= */
 body {
     font-family: Arial, sans-serif;
@@ -17,7 +17,7 @@ h1 {
    Grille du menu
 ================================= */
 #menu {
-    display: grid;
+    display: inline_grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* responsive */
     gap: 20px;
 }
@@ -57,7 +57,7 @@ h1 {
     }
 
 /* ===============================
-   Fiche détaillée du plat
+   Fiche dÃ©taillÃ©e du plat
 ================================= */
 #dish-detail {
     position: fixed;
@@ -107,3 +107,4 @@ h1 {
     font-size: 28px;
     font-weight: bold;
 }
+
