@@ -17,9 +17,16 @@ h1 {
    Grille du menu
 ================================= */
 #menu {
-    display: inline-grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* responsive */
-    gap: 20px;
+  display: grid;
+  
+  /* 2 colonnes de même largeur */
+  grid-template-columns: 1fr 1fr;
+
+  /* 3 colonnes fixes de 200px */
+  grid-template-columns: 200px 200px 200px;
+
+  /* Colonnes automatiques selon la taille disponible */
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 }
 
 /* ===============================
@@ -107,6 +114,7 @@ h1 {
     font-size: 28px;
     font-weight: bold;
 }
+
 
 
 
