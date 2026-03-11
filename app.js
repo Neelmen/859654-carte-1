@@ -159,4 +159,7 @@ detailContent.forEach(el => {
 // ================================
 // Lancement
 // ================================
-showMainMenu();
+document.addEventListener("DOMContentLoaded", () => {
+    showMainMenu();
+});
+
