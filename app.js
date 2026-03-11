@@ -66,6 +66,7 @@ function showMainMenu() {
         btn.textContent = cat.toUpperCase();
 
         btn.onclick = () => {
+            console.log("Catégorie cliquée:", cat);
             selectedCategory = cat;
             showSubcategories(cat);
         };
@@ -163,6 +164,7 @@ detailContent.forEach(el => {
 document.addEventListener("DOMContentLoaded", () => {
     showMainMenu();
 });
+
 
 
 
