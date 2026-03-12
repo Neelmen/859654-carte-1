@@ -1,0 +1,182 @@
+/* ===============================
+   Styles généraux
+================================= */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background: #939393;
+    text-align: center;
+}
+
+h1 {
+    margin-bottom: 30px;
+}
+
+/* ===============================
+   Navigation principale
+================================= */
+#navigation {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    z-index: 2; /* toujours au-dessus de l'overlay */
+}
+
+    #navigation button {
+        width: 220px;
+        background: white;
+        border: none;
+        padding: 15px;
+        border-radius: 12px;
+        font-size: 18px;
+        cursor: pointer;
+        font-weight: bold;
+        box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+        z-index: 2;
+    }
+
+        #navigation button:hover {
+            background: #e63946;
+            color: white;
+        }
+
+/* ===============================
+   Sous-menu (sous-catégories)
+================================= */
+#menu button {
+    width: 220px;
+    padding: 15px;
+    font-size: 18px;
+    border: none;
+    border-radius: 12px;
+    background: white;
+    color: #333;
+    cursor: pointer;
+    margin: 10px auto;
+    display: block;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+    z-index: 2;
+}
+
+    #menu button:hover {
+        background: #E69830;
+        color: white;
+    }
+
+/* ===============================
+   Cartes de plats
+================================= */
+.card {
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    width: 260px;
+    margin: 20px auto;
+    cursor: pointer;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+}
+
+    .card img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover; /* conserve la couverture sans déformation */
+    }
+
+    .card h3 {
+        margin: 10px;
+    }
+
+    .card p {
+        margin: 10px;
+    }
+
+/* ===============================
+   Fiche détaillée du plat
+================================= */
+#dish-detail {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.85);
+    color: white;
+    display: none; /* caché par défaut */
+
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 10;
+}
+
+    #dish-detail img {
+        max-width: 80%;
+        border-radius: 10px;
+    }
+
+    #dish-detail h2 {
+        margin: 10px 0;
+    }
+
+    #dish-detail p {
+        margin: 5px 0;
+    }
+
+/* Cache l'overlay par défaut */
+.hidden {
+    display: none !important;
+}
+
+/* ===============================
+   Bouton retour
+================================= */
+#back-button {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #e63946;
+    color: white;
+    padding: 12px 25px;
+    border-radius: 30px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 2;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+}
+#navigation button.active {
+    background: #e63946;
+    color: white;
+}
+/* ===============================
+   Visionneuse image plein écran
+================================= */
+
+#image-viewer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+}
+
+    #image-viewer img {
+        max-width: 90%;
+        max-height: 90%;
+        border-radius: 10px;
+    }
+/* ===============================
+   Espace bas du menu (évite que le bouton retour cache les plats)
+================================= */
+
+#menu {
+    padding-bottom: 120px;
+}
