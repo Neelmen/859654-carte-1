@@ -1,13 +1,12 @@
 // ================================
-// app.js - site client
+// app.js - site client (public images)
 // ================================
 console.log("APP JS CLIENT CHARGÉ");
 
 const SUPABASE_URL = "https://oaxpofkmtrudriyrbxvy.supabase.co";
-const SUPABASE_KEY = "sb_publishable_W0bTuLBKIo_-tSVK_XfKYg_LScZ_5EY";
-const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
 const BUCKET_NAME = "dishes-images";
+const client = supabase.createClient(SUPABASE_URL, "sb_publishable_W0bTuLBKIo_-tSVK_XfKYg_LScZ_5EY");
+
 const cache = {};
 let currentCategory = null;
 
@@ -21,10 +20,9 @@ function getImageUrlFromPath(imagePath) {
 
 // ================================
 // Retourne le chemin image depuis dish
-// priorité absolue à image_path
 // ================================
 function getDishImagePath(dish) {
-    return dish.image_path || "";
+    return dish.image_path || ""; // priorité absolue à image_path
 }
 
 // ================================
@@ -33,10 +31,7 @@ function getDishImagePath(dish) {
 async function showCategory(category) {
     currentCategory = category;
 
-    window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
 
     const container = document.getElementById("menu");
     container.innerHTML = "";
@@ -44,9 +39,7 @@ async function showCategory(category) {
     const navButtons = document.querySelectorAll("#navigation button");
     navButtons.forEach(btn => {
         btn.classList.remove("active");
-        if (btn.textContent.toLowerCase() === category) {
-            btn.classList.add("active");
-        }
+        if (btn.textContent.toLowerCase() === category) btn.classList.add("active");
     });
 
     document.getElementById("back-button").classList.remove("hidden");
@@ -113,7 +106,7 @@ function displayCategory(grouped) {
                 this.style.display = "none";
             };
 
-            img.addEventListener("click", (e) => {
+            img.addEventListener("click", e => {
                 e.stopPropagation();
                 showFullscreenImage(imageUrl);
             });
@@ -160,9 +153,7 @@ function showFullscreenImage(src) {
 
     viewer.appendChild(img);
 
-    viewer.addEventListener("click", () => {
-        viewer.remove();
-    });
+    viewer.addEventListener("click", () => viewer.remove());
 
     document.body.appendChild(viewer);
 }
@@ -204,7 +195,6 @@ function initMainMenu() {
     nav.innerHTML = "";
 
     const categories = ["entree", "plat", "dessert", "boisson"];
-
     categories.forEach(cat => {
         const btn = document.createElement("button");
         btn.textContent = cat.toUpperCase();
@@ -219,11 +209,7 @@ function initMainMenu() {
 // Bouton retour
 // ================================
 document.getElementById("back-button").addEventListener("click", () => {
-    window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-    });
-
+    window.scrollTo({ top: 0, behavior: "smooth" });
     initMainMenu();
     document.getElementById("menu").innerHTML = "";
 });
