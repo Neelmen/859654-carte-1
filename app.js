@@ -80,7 +80,6 @@ function displayCategory(grouped) {
     container.innerHTML = "";
 
     Object.keys(grouped).forEach(sub => {
-        }
 
         grouped[sub].forEach(dish => {
             const card = document.createElement("div");
@@ -119,6 +118,7 @@ function displayCategory(grouped) {
 
             container.appendChild(card);
         });
+
     });
 }
 
