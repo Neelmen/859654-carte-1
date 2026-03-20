@@ -200,3 +200,44 @@ button, input, select, textarea {
 #menu button.sub-category {
     display: none;
 }
+/* ===============================
+   VERSION PC (avec bandes latérales)
+================================= */
+@media (min-width: 1024px) {
+
+    body {
+        padding: 0;
+    }
+
+    /* Conteneur principal */
+    .page {
+        display: flex;
+        justify-content: center;
+        align-items: stretch;
+        min-height: 100vh;
+    }
+
+    /* Bandes latérales */
+    .side {
+        width: 25%;
+        background-size: cover;
+        background-position: center;
+    }
+
+    .side.left {
+        background-image: url("gauche.jpg");
+    }
+
+    .side.right {
+        background-image: url("droite.jpg");
+    }
+
+    /* Zone centrale (ton site) */
+    .main-content {
+        width: 500px;
+        background: #939393;
+        padding: 20px;
+        box-shadow: 0 0 30px rgba(0,0,0,0.4);
+        min-height: 100vh;
+    }
+}
