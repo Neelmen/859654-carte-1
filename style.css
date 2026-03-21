@@ -58,7 +58,6 @@ h1 {
     background: #e63946;
     color: white !important;
 }
-
 /* ===============================
    Conteneur plats par catégorie
 ================================= */
@@ -69,23 +68,16 @@ h1 {
     gap: 40px; /* espace entre catégories */
 }
 
-/* Groupe de catégorie - grille 4 colonnes */
+/* Groupe de catégorie - grille 2 colonnes */
 .category-group {
     display: grid;
-    grid-template-columns: repeat(4, 1fr); /* 4 colonnes */
+    grid-template-columns: repeat(2, 1fr); /* 2 colonnes */
     gap: 20px;
     justify-items: center;
 }
 
-/* Responsive : 2 colonnes sur tablette */
-@media (max-width: 768px) {
-    .category-group {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
 /* Responsive : 1 colonne sur mobile */
-@media (max-width: 480px) {
+@media (max-width: 768px) {
     .category-group {
         grid-template-columns: 1fr;
     }
