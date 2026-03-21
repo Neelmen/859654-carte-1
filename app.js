@@ -28,7 +28,6 @@ async function showCategory(category) {
     const container = document.getElementById("menu");
     container.innerHTML = "";
 
-    // Gestion des boutons nav
     const navButtons = document.querySelectorAll("#navigation button");
     navButtons.forEach(btn => {
         btn.classList.remove("active");
@@ -54,7 +53,7 @@ async function showCategory(category) {
         return;
     }
 
-    // Regroupement par subcategory pour tri
+    // Trie par subcategory pour garder la logique
     const grouped = {};
     data.forEach(dish => {
         const sub = dish.subcategory || "Autres";
@@ -67,35 +66,28 @@ async function showCategory(category) {
 }
 
 // ================================
-// Affiche les plats dans une grille de 4 colonnes
+// Affiche les plats dans des grilles 2 colonnes
 // ================================
 function displayCategory(grouped) {
     const container = document.getElementById("menu");
     container.innerHTML = "";
 
-    // Création d'une grille CSS
-    const grid = document.createElement("div");
-    grid.className = "dish-grid";
-    grid.style.display = "grid";
-    grid.style.gridTemplateColumns = "repeat(4, 1fr)";
-    grid.style.gap = "20px";
-    grid.style.justifyItems = "center";
-
-    // Tri des sous-catégories
+    // Parcours toutes les subcategories (tri alphabétique)
     const subsSorted = Object.keys(grouped).sort();
 
     subsSorted.forEach(sub => {
+        const groupDiv = document.createElement("div");
+        groupDiv.className = "category-group"; // applique la grille
+
         grouped[sub].forEach(dish => {
             const card = document.createElement("div");
             card.className = "card";
-            card.style.width = "100%";
 
             const imageUrl = getImageUrlFromPath(dish.image_path);
 
             const img = document.createElement("img");
             img.loading = "lazy";
             img.alt = dish.name;
-            img.className = "dish-image";
             img.src = imageUrl;
             img.onerror = () => img.style.display = "none";
             img.addEventListener("click", e => {
@@ -114,15 +106,15 @@ function displayCategory(grouped) {
             card.appendChild(pPrice);
             card.addEventListener("click", () => showDetail(dish));
 
-            grid.appendChild(card);
+            groupDiv.appendChild(card);
         });
-    });
 
-    container.appendChild(grid);
+        container.appendChild(groupDiv);
+    });
 }
 
 // ================================
-// Image plein écran
+// Reste du JS : détails et viewer
 // ================================
 function showFullscreenImage(src) {
     const viewer = document.createElement("div");
@@ -149,9 +141,6 @@ function showFullscreenImage(src) {
     document.body.appendChild(viewer);
 }
 
-// ================================
-// Fiche détail du plat
-// ================================
 function showDetail(dish) {
     const detail = document.getElementById("dish-detail");
     detail.classList.remove("hidden");
@@ -166,15 +155,10 @@ function showDetail(dish) {
     document.getElementById("detail-allergens").textContent = dish.allergens || "";
 }
 
-// ================================
-// Fermeture fiche détail
-// ================================
 const detail = document.getElementById("dish-detail");
 if (detail) {
     detail.addEventListener("click", () => detail.classList.add("hidden"));
-    detail.querySelectorAll("img, h2, p").forEach(el => {
-        el.addEventListener("click", e => e.stopPropagation());
-    });
+    detail.querySelectorAll("img, h2, p").forEach(el => el.addEventListener("click", e => e.stopPropagation()));
 }
 
 // ================================
@@ -183,7 +167,6 @@ if (detail) {
 function initMainMenu() {
     const nav = document.getElementById("navigation");
     nav.innerHTML = "";
-
     const categories = ["entree", "plat", "dessert", "boisson"];
     categories.forEach(cat => {
         const btn = document.createElement("button");
@@ -191,7 +174,6 @@ function initMainMenu() {
         btn.addEventListener("click", () => showCategory(cat));
         nav.appendChild(btn);
     });
-
     document.getElementById("back-button").classList.add("hidden");
 }
 
