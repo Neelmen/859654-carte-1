@@ -22,7 +22,7 @@ function getImageUrlFromPath(imagePath) {
 // Retourne le chemin image depuis dish
 // ================================
 function getDishImagePath(dish) {
-    return dish.image_path || ""; 
+    return dish.image_path || "";
 }
 
 // ================================
@@ -35,7 +35,7 @@ async function showCategory(category) {
     const container = document.getElementById("menu");
     container.innerHTML = "";
 
-    // Boutons navigation
+    // Gestion des boutons nav
     const navButtons = document.querySelectorAll("#navigation button");
     navButtons.forEach(btn => {
         btn.classList.remove("active");
@@ -49,7 +49,7 @@ async function showCategory(category) {
         return;
     }
 
-    // Récupération depuis Supabase
+    // Récupération des plats Supabase
     const { data, error } = await client
         .from("dishes")
         .select("*")
@@ -62,7 +62,7 @@ async function showCategory(category) {
         return;
     }
 
-    // Regroupe dynamiquement par subcategory
+    // Tri et regroupement par subcategory
     const grouped = {};
     data.forEach(dish => {
         const sub = dish.subcategory || "Autres";
@@ -75,17 +75,20 @@ async function showCategory(category) {
 }
 
 // ================================
-// Affiche les plats triés par subcategory, sans afficher le nom
+// Affiche les plats triés par subcategory
 // ================================
 function displayCategory(grouped) {
     const container = document.getElementById("menu");
     container.innerHTML = "";
 
-    // Parcours toutes les subcategories (pour trier)
+    // Nouvelle structure: groupe catégorie
+    const categoryGroup = document.createElement("div");
+    categoryGroup.className = "category-group";
+
+    // Tri des sous-catégories
     const subsSorted = Object.keys(grouped).sort();
 
     subsSorted.forEach(sub => {
-        // Affiche uniquement les plats, pas le titre subcategory
         grouped[sub].forEach(dish => {
             const card = document.createElement("div");
             card.className = "card";
@@ -114,9 +117,11 @@ function displayCategory(grouped) {
             card.appendChild(pPrice);
             card.addEventListener("click", () => showDetail(dish));
 
-            container.appendChild(card);
+            categoryGroup.appendChild(card);
         });
     });
+
+    container.appendChild(categoryGroup);
 }
 
 // ================================
