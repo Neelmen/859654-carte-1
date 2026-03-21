@@ -83,39 +83,45 @@ function displayCategory(grouped) {
         groupDiv.className = "category-group";
 
         // Ajoute les plats
-        grouped[sub].forEach(dish => {
-            const card = document.createElement("div");
-            card.className = "card";
+         grouped[sub].forEach(dish => {
+    const card = document.createElement("div");
+    card.className = "card";
 
-            const imageUrl = getImageUrlFromPath(dish.image_path);
+    const imageUrl = getImageUrlFromPath(dish.image_path);
 
-            const img = document.createElement("img");
-            img.loading = "lazy";
-            img.alt = dish.name;
-            img.src = imageUrl;
-            img.onerror = () => img.style.display = "none";
-            img.addEventListener("click", e => {
-                e.stopPropagation();
-                showFullscreenImage(imageUrl);
-            });
-
-            const h3Name = document.createElement("h3");
-            h3Name.textContent = dish.name;
-
-            const pPrice = document.createElement("p");
-            pPrice.textContent = dish.price + " €";
-
-            card.appendChild(img);
-            card.appendChild(h3Name);
-            card.appendChild(pPrice);
-            card.addEventListener("click", () => showDetail(dish));
-
-            groupDiv.appendChild(card);
-        });
-
-        container.appendChild(groupDiv);
+    const img = document.createElement("img");
+    img.loading = "lazy";
+    img.alt = dish.name;
+    img.src = imageUrl;
+    img.onerror = () => img.style.display = "none";
+    img.addEventListener("click", e => {
+        e.stopPropagation();
+        showFullscreenImage(imageUrl);
     });
-}
+
+    const h3Name = document.createElement("h3");
+    h3Name.textContent = dish.name;
+
+    const pPrice = document.createElement("p");
+    pPrice.textContent = dish.price + " €";
+
+    // Ajout description + ingrédients
+    const pDesc = document.createElement("p");
+    pDesc.textContent = dish.description || "";
+
+    const pIng = document.createElement("p");
+    pIng.textContent = dish.ingredients || "";
+
+    card.appendChild(img);
+    card.appendChild(h3Name);
+    card.appendChild(pPrice);
+    card.appendChild(pDesc);
+    card.appendChild(pIng);
+
+    card.addEventListener("click", () => showDetail(dish));
+
+    groupDiv.appendChild(card);
+});
 
 // ================================
 // Image plein écran
