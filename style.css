@@ -151,10 +151,8 @@ h1 {
     border-radius: 30px;
     font-weight: bold;
     cursor: pointer;
-    z-index: 2;
+    z-index: 10001; /* plus grand que #dish-detail et #image-viewer */
     box-shadow: 0 8px 20px rgba(0,0,0,0.35);
-    -webkit-appearance: none;
-    font-family: inherit;
 }
 
 #navigation button.active {
