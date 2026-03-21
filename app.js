@@ -104,6 +104,9 @@ function displayCategory(grouped) {
 
                 const pDesc = document.createElement("p");
                 pDesc.textContent = dish.description || "";
+                if (dish.description) {
+                    pIng.innerHTML = "<b>°</b> " + dish.description;
+                }
 
                 const pIng = document.createElement("p");
                 if (dish.ingredients) {
