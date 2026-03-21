@@ -219,10 +219,17 @@ function initMainMenu() {
 // ================================
 document.getElementById("back-button").addEventListener("click", () => {
     const detail = document.getElementById("dish-detail");
-    if (!detail.classList.contains("hidden")) {
-        detail.classList.add("hidden"); // ferme la fiche
+    const viewer = document.getElementById("image-viewer");
+
+    if (detail && !detail.classList.contains("hidden")) {
+        // ferme la fiche détaillée
+        detail.classList.add("hidden");
+    } else if (viewer) {
+        // ferme la visionneuse d'image
+        viewer.remove();
     } else {
-        initMainMenu(); // sinon retourne au menu
+        // sinon retourne au menu principal
+        initMainMenu();
         document.getElementById("menu").innerHTML = "";
     }
 });
