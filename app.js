@@ -19,13 +19,6 @@ function getImageUrlFromPath(imagePath) {
 }
 
 // ================================
-// Retourne le chemin image depuis dish
-// ================================
-function getDishImagePath(dish) {
-    return dish.image_path || "";
-}
-
-// ================================
 // Affiche la catégorie sélectionnée
 // ================================
 async function showCategory(category) {
@@ -49,7 +42,6 @@ async function showCategory(category) {
         return;
     }
 
-    // Récupération des plats Supabase
     const { data, error } = await client
         .from("dishes")
         .select("*")
@@ -62,7 +54,7 @@ async function showCategory(category) {
         return;
     }
 
-    // Tri et regroupement par subcategory
+    // Regroupement par subcategory pour tri
     const grouped = {};
     data.forEach(dish => {
         const sub = dish.subcategory || "Autres";
@@ -75,15 +67,19 @@ async function showCategory(category) {
 }
 
 // ================================
-// Affiche les plats triés par subcategory
+// Affiche les plats dans une grille de 4 colonnes
 // ================================
 function displayCategory(grouped) {
     const container = document.getElementById("menu");
     container.innerHTML = "";
 
-    // Nouvelle structure: groupe catégorie
-    const categoryGroup = document.createElement("div");
-    categoryGroup.className = "category-group";
+    // Création d'une grille CSS
+    const grid = document.createElement("div");
+    grid.className = "dish-grid";
+    grid.style.display = "grid";
+    grid.style.gridTemplateColumns = "repeat(4, 1fr)";
+    grid.style.gap = "20px";
+    grid.style.justifyItems = "center";
 
     // Tri des sous-catégories
     const subsSorted = Object.keys(grouped).sort();
@@ -92,6 +88,7 @@ function displayCategory(grouped) {
         grouped[sub].forEach(dish => {
             const card = document.createElement("div");
             card.className = "card";
+            card.style.width = "100%";
 
             const imageUrl = getImageUrlFromPath(dish.image_path);
 
@@ -117,11 +114,11 @@ function displayCategory(grouped) {
             card.appendChild(pPrice);
             card.addEventListener("click", () => showDetail(dish));
 
-            categoryGroup.appendChild(card);
+            grid.appendChild(card);
         });
     });
 
-    container.appendChild(categoryGroup);
+    container.appendChild(grid);
 }
 
 // ================================
@@ -148,9 +145,7 @@ function showFullscreenImage(src) {
     img.style.borderRadius = "10px";
 
     viewer.appendChild(img);
-
     viewer.addEventListener("click", () => viewer.remove());
-
     document.body.appendChild(viewer);
 }
 
