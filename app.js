@@ -218,11 +218,14 @@ function initMainMenu() {
 // Bouton retour
 // ================================
 document.getElementById("back-button").addEventListener("click", () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-    initMainMenu();
-    document.getElementById("menu").innerHTML = "";
+    const detail = document.getElementById("dish-detail");
+    if (!detail.classList.contains("hidden")) {
+        detail.classList.add("hidden"); // ferme la fiche
+    } else {
+        initMainMenu(); // sinon retourne au menu
+        document.getElementById("menu").innerHTML = "";
+    }
 });
-
 // ================================
 // Lancement
 // ================================
