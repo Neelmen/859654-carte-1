@@ -28,6 +28,7 @@ async function showCategory(category) {
     const container = document.getElementById("menu");
     container.innerHTML = "";
 
+    // Boutons navigation
     const navButtons = document.querySelectorAll("#navigation button");
     navButtons.forEach(btn => {
         btn.classList.remove("active");
@@ -41,6 +42,7 @@ async function showCategory(category) {
         return;
     }
 
+    // Récupération depuis Supabase
     const { data, error } = await client
         .from("dishes")
         .select("*")
@@ -49,11 +51,11 @@ async function showCategory(category) {
 
     if (error) {
         console.error("Erreur Supabase:", error);
-        container.innerHTML = "<p>Erreur lors du chargement de la carte.</p>";
+        container.innerHTML = "<p>Erreur lors du chargement des plats.</p>";
         return;
     }
 
-    // Trie par subcategory pour garder la logique
+    // Regroupe dynamiquement par subcategory
     const grouped = {};
     data.forEach(dish => {
         const sub = dish.subcategory || "Autres";
@@ -66,19 +68,21 @@ async function showCategory(category) {
 }
 
 // ================================
-// Affiche les plats dans des grilles 2 colonnes
+// Affiche les plats triés par subcategory dans 2 colonnes
 // ================================
 function displayCategory(grouped) {
     const container = document.getElementById("menu");
     container.innerHTML = "";
 
-    // Parcours toutes les subcategories (tri alphabétique)
+    // Tri des subcategories
     const subsSorted = Object.keys(grouped).sort();
 
     subsSorted.forEach(sub => {
+        // Crée un groupe de catégorie (2 colonnes)
         const groupDiv = document.createElement("div");
-        groupDiv.className = "category-group"; // applique la grille
+        groupDiv.className = "category-group";
 
+        // Ajoute les plats
         grouped[sub].forEach(dish => {
             const card = document.createElement("div");
             card.className = "card";
@@ -114,7 +118,7 @@ function displayCategory(grouped) {
 }
 
 // ================================
-// Reste du JS : détails et viewer
+// Image plein écran
 // ================================
 function showFullscreenImage(src) {
     const viewer = document.createElement("div");
@@ -137,10 +141,15 @@ function showFullscreenImage(src) {
     img.style.borderRadius = "10px";
 
     viewer.appendChild(img);
+
     viewer.addEventListener("click", () => viewer.remove());
+
     document.body.appendChild(viewer);
 }
 
+// ================================
+// Fiche détail du plat
+// ================================
 function showDetail(dish) {
     const detail = document.getElementById("dish-detail");
     detail.classList.remove("hidden");
@@ -155,10 +164,15 @@ function showDetail(dish) {
     document.getElementById("detail-allergens").textContent = dish.allergens || "";
 }
 
+// ================================
+// Fermeture fiche détail
+// ================================
 const detail = document.getElementById("dish-detail");
 if (detail) {
     detail.addEventListener("click", () => detail.classList.add("hidden"));
-    detail.querySelectorAll("img, h2, p").forEach(el => el.addEventListener("click", e => e.stopPropagation()));
+    detail.querySelectorAll("img, h2, p").forEach(el => {
+        el.addEventListener("click", e => e.stopPropagation());
+    });
 }
 
 // ================================
@@ -167,6 +181,7 @@ if (detail) {
 function initMainMenu() {
     const nav = document.getElementById("navigation");
     nav.innerHTML = "";
+
     const categories = ["entree", "plat", "dessert", "boisson"];
     categories.forEach(cat => {
         const btn = document.createElement("button");
@@ -174,6 +189,7 @@ function initMainMenu() {
         btn.addEventListener("click", () => showCategory(cat));
         nav.appendChild(btn);
     });
+
     document.getElementById("back-button").classList.add("hidden");
 }
 
