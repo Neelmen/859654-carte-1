@@ -69,12 +69,26 @@ h1 {
     gap: 40px; /* espace entre catégories */
 }
 
-/* Chaque groupe de catégorie */
+/* Groupe de catégorie - grille 4 colonnes */
 .category-group {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 colonnes */
     gap: 20px;
+    justify-items: center;
+}
+
+/* Responsive : 2 colonnes sur tablette */
+@media (max-width: 768px) {
+    .category-group {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Responsive : 1 colonne sur mobile */
+@media (max-width: 480px) {
+    .category-group {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* ===============================
@@ -84,7 +98,7 @@ h1 {
     background: white;
     border-radius: 10px;
     overflow: hidden;
-    width: 260px;
+    width: 100%; /* occupe toute la cellule */
     cursor: pointer;
     box-shadow: 0 10px 20px rgba(0,0,0,0.3);
     display: flex;
