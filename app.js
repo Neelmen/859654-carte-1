@@ -156,12 +156,12 @@ function showDetail(dish) {
 
     const imageUrl = getImageUrlFromPath(dish.image_path);
 
-    document.getElementById("detail-image").src = imageUrl;
-    document.getElementById("detail-name").textContent = dish.name;
-    document.getElementById("detail-price").textContent = dish.price + " €";
-    document.getElementById("detail-description").textContent = dish.description || "";
-    document.getElementById("detail-ingredients").textContent = dish.ingredients || "";
-    document.getElementById("detail-allergens").textContent = dish.allergens || "";
+    document.getElementById("image").src = imageUrl;
+    document.getElementById("name").textContent = dish.name;
+    document.getElementById("price").textContent = dish.price + " €";
+    document.getElementById("description").textContent = dish.description || "";
+    document.getElementById("ingredients").textContent = dish.ingredients || "";
+    document.getElementById("allergens").textContent = dish.allergens || "";
 }
 
 // ================================
