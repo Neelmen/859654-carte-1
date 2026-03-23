@@ -58,11 +58,14 @@ async function showCategory(category) {
 
     // Regroupe par subcategory
     const grouped = data.reduce((acc, dish) => {
-        const sub = dish.subcategory || "Autres";
-        if (!acc[sub]) acc[sub] = [];
-        acc[sub].push(dish);
-        return acc;
-    }, {});
+    const sub = dish.subcategory && dish.subcategory.trim() !== "" 
+        ? dish.subcategory 
+        : "_no_sub"; // clé interne
+
+    if (!acc[sub]) acc[sub] = [];
+    acc[sub].push(dish);
+    return acc;
+}, {});
 
     cache[category] = grouped;
     displayCategory(grouped);
@@ -71,21 +74,34 @@ async function showCategory(category) {
 // ================================
 // Affiche les plats triés par subcategory dans 2 colonnes
 // ================================
-// ================================
-// Affiche les plats triés par subcategory dans 2 colonnes
-// ================================
 function displayCategory(grouped) {
     const container = document.getElementById("menu");
     container.innerHTML = "";
 
     // Tri des sous-catégories
-    Object.keys(grouped)
-        .sort()
-        .forEach(sub => {
+    // transformer en tableau pour trier
+const entries = Object.entries(grouped);
+
+// séparer les sans sous-catégorie
+const withSub = entries.filter(([key]) => key !== "_no_sub");
+const noSub = entries.find(([key]) => key === "_no_sub");
+
+// trier par nombre de plats (desc)
+withSub.sort((a, b) => b[1].length - a[1].length);
+
+// reconstruire ordre final
+const sorted = noSub ? [...withSub, noSub] : withSub;
+
+sorted.forEach(([sub, dishes]) => {
+            let displayName = sub;
+
+if (sub === "_no_sub") {
+    displayName = dishes.length > 1 ? "Autres" : "Autre";
+}
             const groupDiv = document.createElement("div");
             groupDiv.className = "category-group";
 
-            grouped[sub].forEach(dish => {
+            dishes.forEach(dish => {
                 const card = document.createElement("div");
                 card.className = "card";
 
