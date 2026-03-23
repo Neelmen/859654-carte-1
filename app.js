@@ -98,6 +98,9 @@ sorted.forEach(([sub, dishes]) => {
 if (sub === "_no_sub") {
     displayName = dishes.length > 1 ? "Autres" : "Autre";
 }
+            const title = document.createElement("h2");
+title.textContent = displayName;
+container.appendChild(title);
             const groupDiv = document.createElement("div");
             groupDiv.className = "category-group";
 
