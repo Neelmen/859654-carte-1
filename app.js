@@ -25,6 +25,19 @@ function getImageUrlFromPath(imagePath) {
 // Affiche la catégorie sélectionnée
 // ================================
 async function showCategory(category) {
+    if (currentCategory === category) {
+    // ferme le menu si on reclique dessus
+    currentCategory = null;
+    document.getElementById("menu").innerHTML = "";
+    document.getElementById("back-button").classList.add("hidden");
+
+    // reset boutons actifs
+    document.querySelectorAll("#navigation button").forEach(btn => {
+        btn.classList.remove("active");
+    });
+
+    return;
+}
     currentCategory = category;
     window.scrollTo({ top: 0, behavior: "smooth" });
 
