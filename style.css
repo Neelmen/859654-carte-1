@@ -116,15 +116,15 @@ h1 {
     justify-content: center;
     background: rgba(0,0,0,0.85);
     z-index: 10000;
-    padding: 0; /* pas de padding pour que la card prenne tout l'espace */
+    padding: 0;
     overflow-y: auto; /* scroll si besoin */
 }
 
 #dish-detail .card {
-    width: 100%; /* prend toute la largeur */
-    max-width: 100%; 
-    margin: 0;
-    border-radius: 0; /* optionnel pour effet fullscreen */
+    width: calc(100% - 20px); /* 10px de chaque côté */
+    max-width: calc(100% - 20px);
+    margin: 10px 0; /* 10px haut/bas */
+    border-radius: 10px;
     background: white;
     display: flex;
     flex-direction: column;
@@ -196,8 +196,8 @@ button, input, select, textarea {
 }
 #dish-detail .card img {
     width: 100%;
-    height: auto; /* conserve proportions */
-    max-height: 60vh; /* limite la hauteur pour laisser les infos visibles */
+    height: auto;
+    max-height: 60vh; /* limite la hauteur de l'image */
     object-fit: contain;
     margin-bottom: 20px;
 }
