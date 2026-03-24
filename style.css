@@ -2,16 +2,22 @@
    Styles généraux client
 ================================= */
 body {
-    font-family: Arial, sans-serif;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 20px;
     background: #e1c699;
     text-align: center;
     color: #333;
+    line-height: 1.6;
 }
 
 h1 {
     margin-bottom: 30px;
+    font-family: "Georgia", serif;
+    font-weight: bold;
+    font-size: 2.5rem;
+    letter-spacing: 1px;
+    color: #222;
 }
 
 /* ===============================
@@ -31,17 +37,23 @@ h1 {
     border: none;
     padding: 15px;
     border-radius: 12px;
-    font-size: 18px;
+    font-size: 1.1rem;
     cursor: pointer;
-    font-weight: bold;
+    font-weight: 600;
     box-shadow: 0 5px 10px rgba(0,0,0,0.2);
     z-index: 2;
     color: #333 !important;
     -webkit-appearance: none;
     font-family: inherit;
+    transition: all 0.25s ease;
 }
 
 #navigation button:hover {
+    background: #e63946;
+    color: white !important;
+}
+
+#navigation button.active {
     background: #e63946;
     color: white !important;
 }
@@ -52,7 +64,7 @@ h1 {
 #menu button {
     width: 220px;
     padding: 15px;
-    font-size: 18px;
+    font-size: 1.05rem;
     border: none;
     border-radius: 12px;
     background: white;
@@ -64,6 +76,7 @@ h1 {
     z-index: 2;
     -webkit-appearance: none;
     font-family: inherit;
+    transition: all 0.25s ease;
 }
 
 #menu button:hover {
@@ -83,22 +96,33 @@ h1 {
     margin: 0;
     cursor: pointer;
     box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 25px rgba(0,0,0,0.35);
 }
 
 .card img {
     width: 100%;
     height: 200px;
     object-fit: cover;
+    border-radius: 10px 10px 0 0;
 }
 
 .card h3 {
     margin: 10px;
-    color: #333;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #222;
 }
 
 .card p {
-    margin: 10px;
-    color: #333;
+    margin: 5px 10px;
+    font-size: 0.95rem;
+    color: #555;
 }
 
 /* ===============================
@@ -111,19 +135,19 @@ h1 {
     width: 100%;
     height: 100%;
     display: flex;
-    flex-direction: column; /* empile verticalement */
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     background: rgba(0,0,0,0.85);
     z-index: 10000;
     padding: 0;
-    overflow-y: auto; /* scroll si besoin */
+    overflow-y: auto;
 }
 
 #dish-detail .card {
-    width: calc(100% - 20px); /* 10px de chaque côté */
+    width: calc(100% - 20px);
     max-width: calc(100% - 20px);
-    margin: 10px 0; /* 10px haut/bas */
+    margin: 10px 0;
     border-radius: 10px;
     background: white;
     display: flex;
@@ -131,6 +155,30 @@ h1 {
     align-items: center;
     padding: 20px;
     box-sizing: border-box;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+#dish-detail .card img {
+    width: 100%;
+    height: auto;
+    max-height: 60vh;
+    object-fit: contain;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+#dish-detail .card h3 {
+    font-size: 1.5rem;
+    margin: 10px 0;
+    color: #222;
+}
+
+#dish-detail .card p {
+    font-size: 1rem;
+    color: #555;
+    margin: 5px 0;
+    text-align: left;
+    width: 100%;
 }
 
 /* Cache l'overlay par défaut */
@@ -156,11 +204,6 @@ h1 {
     box-shadow: 0 8px 20px rgba(0,0,0,0.35);
 }
 
-#navigation button.active {
-    background: #e63946;
-    color: white !important;
-}
-
 /* ===============================
    Espace bas du menu
 ================================= */
@@ -181,6 +224,11 @@ h1 {
 #menu h2 {
     margin-top: 40px;
     margin-bottom: 10px;
+    font-family: "Georgia", serif;
+    font-weight: bold;
+    font-size: 1.3rem;
+    color: #222;
+    letter-spacing: 0.5px;
 }
 
 /* Safari fallback pour tous les boutons et inputs */
@@ -189,15 +237,9 @@ button, input, select, textarea {
     color: inherit !important;
     font-family: inherit;
 }
+
 /* Désactive le hover sur les boutons quand la classe no-hover est active */
 #navigation.no-hover button:hover {
     background: white;
     color: #333 !important;
-}
-#dish-detail .card img {
-    width: 100%;
-    height: auto;
-    max-height: 60vh; /* limite la hauteur de l'image */
-    object-fit: contain;
-    margin-bottom: 20px;
 }
