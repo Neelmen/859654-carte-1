@@ -32,9 +32,21 @@ async function showCategory(category) {
     document.getElementById("back-button").classList.add("hidden");
 
     // reset boutons actifs
-    document.querySelectorAll("#navigation button").forEach(btn => {
-        btn.classList.remove("active");
-    });
+    const navButtons = document.querySelectorAll("#navigation button");
+    navButtons.forEach(btn => btn.classList.remove("active"));
+
+    // désactive temporairement le hover
+    const nav = document.getElementById("navigation");
+    nav.classList.add("no-hover");
+
+    // réactive le hover au prochain tap ou mouvement
+    const reactivateHover = () => {
+        nav.classList.remove("no-hover");
+        window.removeEventListener("touchstart", reactivateHover);
+        window.removeEventListener("mousemove", reactivateHover);
+    };
+    window.addEventListener("touchstart", reactivateHover);
+    window.addEventListener("mousemove", reactivateHover);
 
     return;
 }
