@@ -274,7 +274,7 @@ function closeMenuAnimation(callback) {
     const cards = container.querySelectorAll(".card");
 
     // Scroll doucement vers le haut
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    scrollToTop(200); // durée en ms, ajuste pour que ça aille vite
 
     cards.forEach((card, i) => {
         card.style.transition = `opacity 0.3s ease ${i * 0.03}s, transform 0.3s ease ${i * 0.03}s`;
@@ -327,3 +327,16 @@ document.getElementById("back-button").addEventListener("click", () => {
 document.addEventListener("DOMContentLoaded", () => {
     initMainMenu();
 });
+function scrollToTop(duration = 300) {
+    const start = window.scrollY;
+    const startTime = performance.now();
+
+    function animate(time) {
+        const elapsed = time - startTime;
+        const progress = Math.min(elapsed / duration, 1); // 0→1
+        window.scrollTo(0, start * (1 - progress));
+        if (progress < 1) requestAnimationFrame(animate);
+    }
+
+    requestAnimationFrame(animate);
+}
