@@ -179,3 +179,8 @@ button, input, select, textarea {
     color: inherit !important;
     font-family: inherit;
 }
+/* Désactive le hover sur les boutons quand la classe no-hover est active */
+#navigation.no-hover button:hover {
+    background: white;
+    color: #333 !important;
+}
