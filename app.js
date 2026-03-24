@@ -195,58 +195,56 @@ function showFullscreenImage(src) {
 function showDetail(dish) {
     const detail = document.getElementById("dish-detail");
     detail.classList.remove("hidden");
-
-    // Vider le contenu précédent
     detail.innerHTML = "";
 
-    // Créer colonne infos
-    const infoDiv = document.createElement("div");
-    infoDiv.className = "info";
+    // Card zoomée
+    const card = document.createElement("div");
+    card.className = "card";
 
-    const name = document.createElement("h2");
-    name.textContent = dish.name;
-    infoDiv.appendChild(name);
-
-    const price = document.createElement("p");
-    price.textContent = dish.price + " €";
-    infoDiv.appendChild(price);
-
-    if (dish.description) {
-        const desc = document.createElement("p");
-        desc.innerHTML = "<b>Description :</b> " + dish.description;
-        infoDiv.appendChild(desc);
-    }
-
-    if (dish.ingredients) {
-        const ing = document.createElement("p");
-        ing.innerHTML = "<b>Ingrédients :</b> " + dish.ingredients;
-        infoDiv.appendChild(ing);
-    }
-
-    if (dish.allergens) {
-        const allerg = document.createElement("p");
-        allerg.innerHTML = "<b>Allergènes :</b> " + dish.allergens;
-        infoDiv.appendChild(allerg);
-    }
-
-    // Bouton retour
-    const backButton = document.createElement("button");
-    backButton.id = "back-button-detail";
-    backButton.textContent = "Retour";
-    backButton.style.marginTop = "20px";
-    backButton.addEventListener("click", () => {
-        detail.classList.add("hidden");
-    });
-    infoDiv.appendChild(backButton);
-
-    // Créer colonne image
+    // Image
     const img = document.createElement("img");
     img.src = getImageUrlFromPath(dish.image_path);
     img.alt = dish.name;
 
-    // Ajouter colonnes au détail
-    detail.appendChild(infoDiv);
-    detail.appendChild(img);
+    // Nom
+    const h3Name = document.createElement("h3");
+    h3Name.textContent = dish.name;
+
+    // Prix
+    const pPrice = document.createElement("p");
+    pPrice.textContent = dish.price + " €";
+
+    // Description
+    if (dish.description) {
+        const pDesc = document.createElement("p");
+        pDesc.innerHTML = "<b>Description :</b> " + dish.description;
+        card.appendChild(pDesc);
+    }
+
+    // Ingrédients
+    if (dish.ingredients) {
+        const pIng = document.createElement("p");
+        pIng.innerHTML = "<b>Ingrédients :</b> " + dish.ingredients;
+        card.appendChild(pIng);
+    }
+
+    // Allergènes
+    if (dish.allergens) {
+        const pAllerg = document.createElement("p");
+        pAllerg.innerHTML = "<b>Allergènes :</b> " + dish.allergens;
+        card.appendChild(pAllerg);
+    }
+
+    // Bouton retour
+    const backButton = document.createElement("button");
+    backButton.textContent = "Retour";
+    backButton.style.marginTop = "15px";
+    backButton.addEventListener("click", () => {
+        detail.classList.add("hidden");
+    });
+
+    card.append(img, h3Name, pPrice, backButton);
+    detail.appendChild(card);
 }
 
 // ================================
