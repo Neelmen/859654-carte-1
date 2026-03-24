@@ -118,47 +118,40 @@ container.appendChild(title);
             groupDiv.className = "category-group";
 
             dishes.forEach(dish => {
-                const card = document.createElement("div");
-                card.className = "card";
+    const card = document.createElement("div");
+    card.className = "card";
 
-                // Image
-                const imageUrl = getImageUrlFromPath(dish.image_path);
-                const img = document.createElement("img");
-                img.loading = "lazy";
-                img.alt = dish.name;
-                img.src = imageUrl;
-                img.onerror = () => (img.style.display = "none");
-                img.addEventListener("click", e => {
-                    e.stopPropagation();
-                    showFullscreenImage(imageUrl);
-                });
+    // Image
+    const imageUrl = getImageUrlFromPath(dish.image_path);
+    const img = document.createElement("img");
+    img.loading = "lazy";
+    img.alt = dish.name;
+    img.src = imageUrl;
+    img.onerror = () => (img.style.display = "none");
 
-                // Nom du plat
-                const h3Name = document.createElement("h3");
-                h3Name.textContent = dish.name;
+    // Nom du plat
+    const h3Name = document.createElement("h3");
+    h3Name.textContent = dish.name;
 
-                // Prix
-                const pPrice = document.createElement("p");
-                pPrice.textContent = dish.price + " €";
+    // Prix
+    const pPrice = document.createElement("p");
+    pPrice.textContent = dish.price + " €";
 
-                // Description
-                const pDesc = document.createElement("p");
-                if (dish.description) {
-                    pDesc.innerHTML = "<b>Description :</b> " + dish.description;
-                }
+    // Plus d'infos
+    const pInfo = document.createElement("p");
+    pInfo.textContent = "Plus d'infos";
+    pInfo.style.fontWeight = "bold";
+    pInfo.style.color = "#444"; // couleur neutre mais visible
+    pInfo.style.cursor = "pointer";
 
-                // Ingrédients
-                const pIng = document.createElement("p");
-                if (dish.ingredients) {
-                    pIng.innerHTML = "<b>Ingrédients :</b> " + dish.ingredients;
-                }
+    // Assemblage de la carte
+    card.append(img, h3Name, pPrice, pInfo);
 
-                // Assemblage de la carte
-                card.append(img, h3Name, pPrice, pDesc, pIng);
-                card.addEventListener("click", () => showDetail(dish));
+    // Au clic sur la card, ouvrir le détail avec image + infos
+    card.addEventListener("click", () => showDetail(dish));
 
-                groupDiv.appendChild(card);
-            });
+    groupDiv.appendChild(card);
+});
 
             container.appendChild(groupDiv);
         });
