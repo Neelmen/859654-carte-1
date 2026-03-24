@@ -233,7 +233,7 @@ function initMainMenu() {
     const nav = document.getElementById("navigation");
     nav.innerHTML = "";
 
-    const categories = ["entree", "plat", "dessert", "boisson"];
+    const categories = ["entrées", "plats", "desserts", "boissons"];
     categories.forEach(cat => {
         const btn = document.createElement("button");
         btn.textContent = cat.toUpperCase();
@@ -274,7 +274,7 @@ function closeMenuAnimation(callback) {
     const cards = container.querySelectorAll(".card");
 
     // Scroll doucement vers le haut
-    scrollToTop(100); // durée en ms, ajuste pour que ça aille vite
+    scrollToTop(100); // durée d'animation en ms
 
     cards.forEach((card, i) => {
         card.style.transition = `opacity 0.3s ease ${i * 0.03}s, transform 0.3s ease ${i * 0.03}s`;
