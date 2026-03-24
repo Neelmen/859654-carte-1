@@ -195,7 +195,6 @@ function showFullscreenImage(src) {
 function showDetail(dish) {
     const detail = document.getElementById("dish-detail");
     detail.classList.remove("hidden");
-    document.body.style.overflow = "hidden"; // bloque scroll du body
 
     // Vider le contenu précédent
     detail.innerHTML = "";
@@ -237,7 +236,6 @@ function showDetail(dish) {
     backButton.style.marginTop = "20px";
     backButton.addEventListener("click", () => {
         detail.classList.add("hidden");
-        document.body.style.overflow = ""; // réactive scroll du body
     });
     infoDiv.appendChild(backButton);
 
