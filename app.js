@@ -196,18 +196,53 @@ function showDetail(dish) {
     const detail = document.getElementById("dish-detail");
     detail.classList.remove("hidden");
 
-    const imageUrl = getImageUrlFromPath(dish.image_path);
+    // Vider le contenu précédent
+    detail.innerHTML = "";
 
-    document.getElementById("detail-image").src = imageUrl;
-    document.getElementById("detail-name").textContent = dish.name;
-    document.getElementById("detail-price").textContent = dish.price + " €";
-    document.getElementById("detail-description").textContent = dish.description || "";
-    document.getElementById("detail-ingredients").textContent = dish.ingredients || "";
-    document.getElementById("detail-allergens").textContent = dish.allergens || "";
+    // Créer colonne infos
+    const infoDiv = document.createElement("div");
+    infoDiv.className = "info";
 
-    // afficher le bouton retour
-    const backButton = document.getElementById("back-button");
-    backButton.classList.remove("hidden");
+    const name = document.createElement("h2");
+    name.textContent = dish.name;
+
+    const price = document.createElement("p");
+    price.textContent = dish.price + " €";
+
+    if (dish.description) {
+        const desc = document.createElement("p");
+        desc.innerHTML = "<b>Description :</b> " + dish.description;
+        infoDiv.appendChild(desc);
+    }
+
+    if (dish.ingredients) {
+        const ing = document.createElement("p");
+        ing.innerHTML = "<b>Ingrédients :</b> " + dish.ingredients;
+        infoDiv.appendChild(ing);
+    }
+
+    if (dish.allergens) {
+        const allerg = document.createElement("p");
+        allerg.innerHTML = "<b>Allergènes :</b> " + dish.allergens;
+        infoDiv.appendChild(allerg);
+    }
+
+    // Bouton retour
+    const backButton = document.createElement("button");
+    backButton.id = "back-button-detail";
+    backButton.textContent = "Retour";
+    backButton.style.marginTop = "20px";
+    backButton.addEventListener("click", () => detail.classList.add("hidden"));
+    infoDiv.appendChild(backButton);
+
+    // Créer colonne image
+    const img = document.createElement("img");
+    img.src = getImageUrlFromPath(dish.image_path);
+    img.alt = dish.name;
+
+    // Ajouter colonnes au détail
+    detail.appendChild(infoDiv);
+    detail.appendChild(img);
 }
 
 // ================================
