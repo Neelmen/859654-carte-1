@@ -64,9 +64,10 @@ async function showCategory(category) {
     document.getElementById("back-button").classList.remove("hidden");
 
     if (cache[category]) {
-        displayCategory(cache[category]);
-        return;
-    }
+    displayCategory(cache[category]);
+    scrollToMenu(); // <- ajoute cette ligne
+    return;
+}
 
     // Récupération depuis Supabase
     const { data, error } = await client
@@ -94,6 +95,7 @@ async function showCategory(category) {
 
     cache[category] = grouped;
     displayCategory(grouped);
+    scrollToMenu();
 }
 
 // ================================
@@ -304,3 +306,23 @@ document.getElementById("back-button").addEventListener("click", () => {
 document.addEventListener("DOMContentLoaded", () => {
     initMainMenu();
 });
+function scrollToMenu() {
+    const container = document.getElementById("menu");
+    container.scrollIntoView({ 
+        behavior: "smooth", 
+        block: "start" // aligne le haut du container en haut de l'écran
+    });
+
+    // Animation des cartes
+    const cards = container.querySelectorAll(".card");
+    cards.forEach((card, i) => {
+        card.style.opacity = 0;
+        card.style.transform = "translateY(20px)";
+        card.style.transition = `opacity 0.4s ease ${i * 0.05}s, transform 0.4s ease ${i * 0.05}s`;
+        // déclenche l'animation après un petit délai
+        requestAnimationFrame(() => {
+            card.style.opacity = 1;
+            card.style.transform = "translateY(0)";
+        });
+    });
+}
