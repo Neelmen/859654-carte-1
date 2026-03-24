@@ -28,25 +28,44 @@ async function showCategory(category) {
     if (currentCategory === category) {
     // ferme le menu si on reclique dessus
     currentCategory = null;
-    document.getElementById("menu").innerHTML = "";
-    document.getElementById("back-button").classList.add("hidden");
 
-    // reset boutons actifs
-    const navButtons = document.querySelectorAll("#navigation button");
-    navButtons.forEach(btn => btn.classList.remove("active"));
+    const container = document.getElementById("menu");
 
-    // désactive temporairement le hover
-    const nav = document.getElementById("navigation");
-    nav.classList.add("no-hover");
+    // Animation "remonte" avant de vider le menu
+    container.style.opacity = 1;
+    const fadeOut = container.animate([
+        { opacity: 1, transform: 'translateY(0)' },
+        { opacity: 0, transform: 'translateY(-20px)' }
+    ], {
+        duration: 300,
+        easing: 'ease-out',
+        fill: 'forwards'
+    });
 
-    // réactive le hover au prochain tap ou mouvement
-    const reactivateHover = () => {
-        nav.classList.remove("no-hover");
-        window.removeEventListener("touchstart", reactivateHover);
-        window.removeEventListener("mousemove", reactivateHover);
+    fadeOut.onfinish = () => {
+        container.innerHTML = "";
+        document.getElementById("back-button").classList.add("hidden");
+
+        // reset boutons actifs
+        const navButtons = document.querySelectorAll("#navigation button");
+        navButtons.forEach(btn => btn.classList.remove("active"));
+
+        // désactive temporairement le hover
+        const nav = document.getElementById("navigation");
+        nav.classList.add("no-hover");
+
+        // réactive le hover au prochain tap ou mouvement
+        const reactivateHover = () => {
+            nav.classList.remove("no-hover");
+            window.removeEventListener("touchstart", reactivateHover);
+            window.removeEventListener("mousemove", reactivateHover);
+        };
+        window.addEventListener("touchstart", reactivateHover);
+        window.addEventListener("mousemove", reactivateHover);
+
+        // scroll smooth vers le haut
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     };
-    window.addEventListener("touchstart", reactivateHover);
-    window.addEventListener("mousemove", reactivateHover);
 
     return;
 }
