@@ -281,7 +281,7 @@ function closeMenuAnimation(callback) {
     const cards = container.querySelectorAll(".card");
 
     // Scroll doucement vers le haut
-    scrollToTop(150); // durée en ms, ajuste pour que ça aille vite
+    scrollToTop(190); // durée en ms, ajuste pour que ça aille vite
 
     cards.forEach((card, i) => {
         card.style.transition = `opacity 0.3s ease ${i * 0.03}s, transform 0.3s ease ${i * 0.03}s`;
