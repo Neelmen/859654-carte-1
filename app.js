@@ -77,9 +77,17 @@ function displayCategory(grouped) {
     container.innerHTML = "";
 
     Object.entries(grouped).forEach(([sub, dishes]) => {
-        const title = document.createElement("h2");
-        title.textContent = sub === "_no_sub" ? "Autres" : sub;
-        container.appendChild(title);
+        // Pas de "Autres" pour boissons et desserts
+if (
+    sub === "_no_sub" &&
+    (dishes[0].category === "boisson" || dishes[0].category === "dessert")
+) {
+    // pas de titre
+} else {
+    const title = document.createElement("h2");
+    title.textContent = sub === "_no_sub" ? "Autres" : sub;
+    container.appendChild(title);
+}
 
         const groupDiv = document.createElement("div");
         groupDiv.className = "category-group";
