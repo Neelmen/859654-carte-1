@@ -340,37 +340,3 @@ function scrollToTop(duration = 300) {
 
     requestAnimationFrame(animate);
 }
-// ================================
-// Préchargement automatique des images
-// ================================
-async function preloadAllImages() {
-    try {
-        // Récupère tous les plats disponibles
-        const { data, error } = await client
-            .from("dishes")
-            .select("image_path")
-            .eq("available", true);
-
-        if (error) {
-            console.error("Erreur préchargement images:", error);
-            return;
-        }
-
-        data.forEach(dish => {
-            if (dish.image_path) {
-                const img = new Image();
-                img.src = getImageUrlFromPath(dish.image_path);
-            }
-        });
-
-        console.log("Préchargement des images terminé");
-    } catch (err) {
-        console.error("Erreur JS préchargement images:", err);
-    }
-}
-
-// Appel dès que le DOM est prêt
-document.addEventListener("DOMContentLoaded", () => {
-    initMainMenu();
-    preloadAllImages();
-});
