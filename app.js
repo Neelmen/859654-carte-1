@@ -236,9 +236,9 @@ function initMainMenu() {
     const categories = [
   { key: "entree", label: "ENTRÉES" },
   { key: "plat", label: "PLATS" },
+  { key: "accompagnement", label: "ACCOMPAGNEMENTS" },
   { key: "dessert", label: "DESSERTS" },
-  { key: "boisson", label: "BOISSONS" },
-  { key: "accompagnement", label: "ACCOMPAGNEMENTS" }
+  { key: "boisson", label: "BOISSONS" }
 ];
 
 categories.forEach(cat => {
