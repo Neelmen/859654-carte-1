@@ -233,10 +233,19 @@ function initMainMenu() {
     const nav = document.getElementById("navigation");
     nav.innerHTML = "";
 
-    const categories = ["entree", "plat", "accompagnement", "dessert", "boisson"];
+    const categories = ["entree", "plat", "dessert", "boisson", "accompagnement"];
+
+    const labels = {
+        entree: "ENTRÉES",
+        plat: "PLATS",
+        dessert: "DESSERTS",
+        boisson: "BOISSONS",
+        accompagnement: "ACCOMPAGNEMENTS"
+    };
+
     categories.forEach(cat => {
         const btn = document.createElement("button");
-        btn.textContent = cat.toUpperCase();
+        btn.textContent = labels[cat] || cat.toUpperCase(); // ← ici
         btn.addEventListener("click", () => showCategory(cat));
         nav.appendChild(btn);
     });
