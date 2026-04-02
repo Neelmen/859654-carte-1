@@ -83,9 +83,9 @@ async function showCategory(category) {
 }
 
 // ================================
-// Affiche les plats triés par subcategory dans 2 colonnes
+// Affiche les plats triés par subcategory dans 2 colonnes (Chargement Séquentiel)
 // ================================
-function displayCategory(grouped) {
+async function displayCategory(grouped) {
     const container = document.getElementById("menu");
     container.innerHTML = "";
 
@@ -96,7 +96,8 @@ function displayCategory(grouped) {
     withSub.sort((a, b) => b[1].length - a[1].length);
     const sorted = noSub ? [...withSub, noSub] : withSub;
 
-    sorted.forEach(([sub, dishes]) => {
+    // On parcourt chaque groupe (ex: "Entrées Chaudes", "Entrées Froides")
+    for (const [sub, dishes] of sorted) {
         let displayName = sub === "_no_sub" ? (dishes.length > 1 ? "Autres" : "Autre") : sub;
 
         const title = document.createElement("h2");
@@ -105,17 +106,33 @@ function displayCategory(grouped) {
 
         const groupDiv = document.createElement("div");
         groupDiv.className = "category-group";
+        container.appendChild(groupDiv);
 
-        dishes.forEach(dish => {
+        // --- LA FILE D'ATTENTE DES PLATS ---
+        for (const dish of dishes) {
             const card = document.createElement("div");
             card.className = "card";
+            
+            // On prépare l'animation (caché au début)
+            card.style.opacity = "0";
+            card.style.transform = "translateY(15px)";
+            card.style.transition = "all 0.4s ease-out";
 
             const imageUrl = getImageUrlFromPath(dish.image_path);
             const img = document.createElement("img");
-            img.loading = "lazy";
             img.alt = dish.name;
+
+            // On crée une promesse qui attend que l'image soit chargée ou un délai de 0.5s
+            const imageLoadPromise = new Promise((resolve) => {
+                img.onload = resolve;
+                img.onerror = () => {
+                    img.style.display = "none";
+                    resolve();
+                };
+                setTimeout(resolve, 500); // Ne bloque pas plus de 0.5s par plat
+            });
+
             img.src = imageUrl;
-            img.onerror = () => (img.style.display = "none");
 
             const h3Name = document.createElement("h3");
             h3Name.textContent = dish.name;
@@ -130,14 +147,19 @@ function displayCategory(grouped) {
             pInfo.style.cursor = "pointer";
 
             card.append(img, h3Name, pPrice, pInfo);
-
             card.addEventListener("click", () => showDetail(dish));
-
             groupDiv.appendChild(card);
-        });
 
-        container.appendChild(groupDiv);
-    });
+            // ON ATTEND que l'image soit prête avant de passer au plat suivant
+            await imageLoadPromise;
+
+            // On affiche le plat avec une transition fluide
+            requestAnimationFrame(() => {
+                card.style.opacity = "1";
+                card.style.transform = "translateY(0)";
+            });
+        }
+    }
 }
 
 // ================================
