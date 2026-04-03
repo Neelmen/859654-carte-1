@@ -275,16 +275,17 @@ function initMainMenu() {
     document.getElementById("back-button").classList.add("hidden");
 }
 
-// ================================
-// Animation scroll + apparition cartes
-// ================================
+///animation de scroll pour l'ouverture du menu
 function scrollToMenu() {
     const container = document.getElementById("menu");
-    container.scrollIntoView({ 
-        behavior: "smooth", 
-        block: "start"
-    });
+    
+    const yOffset = -20; // Ajuster le nombre pour avoir + ou - de scroll
+    const y = container.getBoundingClientRect().top + window.pageYOffset + yOffset;
 
+    window.scrollTo({
+        top: y,
+        behavior: "smooth"
+    });
     const cards = container.querySelectorAll(".card");
     cards.forEach((card, i) => {
         card.style.opacity = 0;
