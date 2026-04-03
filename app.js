@@ -279,7 +279,7 @@ function initMainMenu() {
 function scrollToMenu() {
     const container = document.getElementById("menu");
     
-    const yOffset = -20; // Ajuster le nombre pour avoir + ou - de scroll
+    const yOffset = -120; // Ajuster le nombre pour avoir + ou - de scroll
     const y = container.getBoundingClientRect().top + window.pageYOffset + yOffset;
 
     window.scrollTo({
