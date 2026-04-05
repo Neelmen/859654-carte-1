@@ -295,11 +295,6 @@ function addRippleEffect() {
         setTimeout(() => ripple.remove(), 600);
     });
 }
-
-document.addEventListener("DOMContentLoaded", () => {
-    addRippleEffect();
-});
-
 ///animation de scroll pour l'ouverture du menu
 function scrollToMenu() {
     const container = document.getElementById("menu");
@@ -383,6 +378,7 @@ document.getElementById("back-button").addEventListener("click", () => {
 // ================================
 document.addEventListener("DOMContentLoaded", () => {
     initMainMenu();
+    addRippleEffect();
 });
 function scrollToTop(duration = 300) {
     const start = window.scrollY;
