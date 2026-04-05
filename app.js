@@ -44,14 +44,11 @@ async function showCategory(category) {
 
     if (cache[category]) {
         displayCategory(cache[category]);
-        scrollToMenu(); // ← scroll ici après le contenu
+        scrollToMenu();
         return;
     }
 
-    // Récupération et affichage...
-}
-
-    // Récupération depuis Supabase
+    // --- Récupération depuis Supabase ---
     const { data, error } = await client
         .from("dishes")
         .select("*")
@@ -64,12 +61,9 @@ async function showCategory(category) {
         return;
     }
 
-    // Regroupe par subcategory
+    // --- Regroupe par subcategory ---
     const grouped = data.reduce((acc, dish) => {
-        const sub = dish.subcategory && dish.subcategory.trim() !== "" 
-            ? dish.subcategory 
-            : "_no_sub";
-
+        const sub = dish.subcategory && dish.subcategory.trim() !== "" ? dish.subcategory : "_no_sub";
         if (!acc[sub]) acc[sub] = [];
         acc[sub].push(dish);
         return acc;
@@ -79,7 +73,6 @@ async function showCategory(category) {
     displayCategory(grouped);
     scrollToMenu();
 }
-
 // ================================
 // Affiche les plats triés par subcategory dans 2 colonnes (Chargement Séquentiel)
 // ================================
