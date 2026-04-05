@@ -28,7 +28,6 @@ async function showCategory(category) {
     const container = document.getElementById("menu");
 
     if (currentCategory === category) {
-        // reclique sur la catégorie → fermer le menu
         currentCategory = null;
         closeMenuAnimation();
         return;
@@ -36,12 +35,8 @@ async function showCategory(category) {
 
     currentCategory = category;
 
-    // Scroll en haut avant affichage
-    window.scrollTo({ top: 0, behavior: "smooth" });
-
     container.innerHTML = "";
 
-    // Gestion boutons actifs
     document.querySelectorAll("#navigation button").forEach(btn => {
         btn.classList.toggle("active", btn.textContent.toLowerCase() === category);
     });
@@ -49,9 +44,12 @@ async function showCategory(category) {
 
     if (cache[category]) {
         displayCategory(cache[category]);
-        scrollToMenu();
+        scrollToMenu(); // ← scroll ici après le contenu
         return;
     }
+
+    // Récupération et affichage...
+}
 
     // Récupération depuis Supabase
     const { data, error } = await client
