@@ -289,20 +289,23 @@ function addRippleEffect() {
 ///animation de scroll pour l'ouverture du menu
 function scrollToMenu() {
     const container = document.getElementById("menu");
-    const containerTop = container.getBoundingClientRect().top + window.pageYOffset;
-    const maxScroll = document.body.scrollHeight - window.innerHeight;
-    const y = Math.min(containerTop + 50, maxScroll); // 50px de marge pour descendre plus bas
 
-    window.scrollTo({
-        top: y,
-        behavior: "smooth"
-    });
+    // On utilise un léger délai pour s'assurer que le contenu 
+    // a commencé à s'injecter dans le DOM avant de calculer la position.
+    setTimeout(() => {
+        container.scrollIntoView({
+            behavior: "smooth",
+            block: "start" // Aligne le HAUT du container avec le HAUT de l'écran
+        });
+    }, 100);
 
+    // Animation d'apparition des cartes
     const cards = container.querySelectorAll(".card");
     cards.forEach((card, i) => {
         card.style.opacity = 0;
         card.style.transform = "translateY(20px)";
         card.style.transition = `opacity 0.4s ease ${i * 0.05}s, transform 0.4s ease ${i * 0.05}s`;
+        
         requestAnimationFrame(() => {
             card.style.opacity = 1;
             card.style.transform = "translateY(0)";
