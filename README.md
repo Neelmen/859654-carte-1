@@ -1,1 +1,1 @@
-https://neelmen.github.io/menu-restaurant/
+https://neelmen.github.io/carte-1/
