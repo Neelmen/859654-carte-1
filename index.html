@@ -1,54 +1,68 @@
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menu du restaurant</title>
-
-    <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
-
-    <!-- Feuille de style -->
+    <title>Le Grangousier - Commande Table</title>
     <link rel="stylesheet" href="style.css">
-
-    <!-- Supabase JS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-
 <body>
 
-<div class="page">
+    <div class="page">
+        <div class="main-content">
+            <div class="logo-text">Le grangousier</div>
+            <h1>Notre Carte</h1>
+            <div id="navigation"></div>
+            <div id="menu"></div>
+            <div id="dish-detail" class="hidden"></div>
+        </div>
 
-    <div class="side left"></div>
+        <div class="order-module">
+            <div class="order-panel-header">
+                <h3>Table <span id="table-id-display"></span></h3>
+                <p>Suivez votre commande en direct.</p>
+            </div>
 
-    <div class="main-content">
-        <!-- Texte LOGO -->
-        <div class="logo-text">Le grangousier</div>
+            <div class="order-actions">
+                <button id="call-waiter" class="primary">Appeler le serveur</button>
+                <button id="request-bill" class="secondary">Demander la note</button>
+            </div>
 
-        <!-- texte brut -->
-        <h1>Notre Carte</h1>
+            <div class="order-messages" id="order-messages"></div>
 
-        <!-- Navigation principale : catégories -->
-        <div id="navigation"></div>
-
-        <!-- Conteneur des sous-menus et cartes de plats -->
-        <div id="menu"></div>
-
-        <!-- Fiche détaillée du plat (vide, rempli via JS) -->
-        <div id="dish-detail" class="hidden"></div>
-
+            <div class="order-items">
+                <h4>Articles commandés</h4>
+                <ul id="order-items-list"></ul>
+                <div id="order-empty" class="muted">Aucune commande pour le moment.</div>
+            </div>
+        </div>
     </div>
 
-    <div class="side right"></div>
+    <div class="order-bar" id="order-bar">
+        <div>
+            <span class="order-bar-label">Total actuel</span>
+            <strong id="order-total">0,00 €</strong>
+        </div>
+        <button id="order-history-toggle">Détails / Historique</button>
+    </div>
 
-</div>
+    <div class="order-history hidden" id="order-history">
+        <div class="history-header">
+            <span>Historique complet</span>
+            <button id="close-history">Fermer</button>
+        </div>
+        <ul id="history-list"></ul>
+    </div>
 
-<!-- Bouton retour toujours au-dessus -->
-<div id="back-button" class="hidden">← Retour</div>
+    <div id="back-button" class="hidden">← Retour</div>
 
-<!-- JS -->
-<script src="app.js"></script>
+    <script src="app.js"></script>
+    <script>
+        // Petit script pour afficher le numéro de table dynamiquement
+        const num = new URLSearchParams(window.location.search).get('table') || '1';
+        document.getElementById('table-id-display').textContent = num;
+    </script>
 
 </body>
 </html>

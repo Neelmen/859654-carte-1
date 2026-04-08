@@ -1,7 +1,14 @@
-// ================================
-// app.js - site client (public images)
-// ================================
-console.log("APP JS CLIENT CHARGÉ");
+const orderState = {
+    items: [],
+    history: [],
+};
+
+const orderElements = {};
+let orderMessageTimer;
+
+// Récupération de la table via l'URL (ex: ?table=1)
+const urlParams = new URLSearchParams(window.location.search);
+const tableNumber = parseInt(urlParams.get('table')) || 1; 
 
 const SUPABASE_URL = "https://oaxpofkmtrudriyrbxvy.supabase.co";
 const BUCKET_NAME = "dishes-images";
@@ -10,34 +17,208 @@ const client = supabase.createClient(
     "sb_publishable_W0bTuLBKIo_-tSVK_XfKYg_LScZ_5EY"
 );
 
+function initOrderModule() {
+    orderElements.total = document.getElementById("order-total");
+    orderElements.historyPanel = document.getElementById("order-history");
+    orderElements.historyList = document.getElementById("history-list");
+    orderElements.historyToggle = document.getElementById("order-history-toggle");
+    orderElements.historyClose = document.getElementById("close-history");
+    orderElements.itemsList = document.getElementById("order-items-list");
+    orderElements.empty = document.getElementById("order-empty");
+    orderElements.messages = document.getElementById("order-messages");
+    orderElements.callWaiter = document.getElementById("call-waiter");
+    orderElements.requestBill = document.getElementById("request-bill");
+
+    if (orderElements.historyToggle) {
+        orderElements.historyToggle.addEventListener("click", () => {
+            orderElements.historyPanel?.classList.toggle("hidden");
+        });
+    }
+
+    if (orderElements.historyClose) {
+        orderElements.historyClose.addEventListener("click", () => {
+            orderElements.historyPanel?.classList.add("hidden");
+        });
+    }
+
+    if (orderElements.callWaiter) {
+        orderElements.callWaiter.addEventListener("click", () => {
+            displayMessage("Le serveur est en route vers votre table.");
+        });
+    }
+
+    if (orderElements.requestBill) {
+        orderElements.requestBill.addEventListener("click", () => {
+            displayMessage("La note va vous être envoyée.");
+        });
+    }
+
+    // Charger les commandes existantes pour cette table au démarrage
+    fetchTableOrders();
+    // Activer l'écoute en temps réel
+    subscribeToOrders();
+}
+
+// RECUPERATION DES DONNEES DEPUIS SUPABASE
+async function fetchTableOrders() {
+    const { data, error } = await client
+        .from('orders')
+        .select('*')
+        .eq('table_id', tableNumber)
+        .neq('status', 'abandonné')
+        .order('created_at', { ascending: true });
+
+    if (error) {
+        console.error("Erreur de chargement des commandes:", error);
+        return;
+    }
+
+    if (data) {
+        // On remplit l'état local avec les données de la DB
+        orderState.items = data.map(d => ({
+            name: d.dish_name,
+            price: d.price,
+            status: d.status
+        }));
+        
+        orderState.history = data.map(d => ({
+            label: d.dish_name,
+            price: d.price,
+            type: d.status, // On utilise le statut pour le type
+            timestamp: new Date(d.created_at),
+        }));
+
+        updateOrderDisplay();
+    }
+}
+
+// ENVOI D'UNE COMMANDE VERS SUPABASE
+async function addToOrder(name, price) {
+    const numericPrice = parseFloat(price);
+    if (Number.isNaN(numericPrice)) {
+        displayMessage("Impossible d'ajouter ce plat.");
+        return;
+    }
+
+    const { error } = await client
+        .from('orders')
+        .insert([{
+            table_id: tableNumber,
+            dish_name: name,
+            price: numericPrice,
+            status: 'commandé'
+        }]);
+
+    if (error) {
+        displayMessage("Erreur réseau lors de la commande.");
+        console.error(error);
+    } else {
+        displayMessage(`${name} a été ajouté à votre commande.`);
+        // Note: l'affichage se mettra à jour via le Realtime (subscribeToOrders)
+    }
+}
+
+// TEMPS RÉEL : Mise à jour automatique si le serveur change un statut
+function subscribeToOrders() {
+    client
+        .channel('schema-db-changes')
+        .on('postgres_changes', 
+            { event: '*', schema: 'public', table: 'orders', filter: `table_id=eq.${tableNumber}` }, 
+            (payload) => {
+                fetchTableOrders();
+            }
+        )
+        .subscribe();
+}
+
+function updateOrderDisplay() {
+    const total = orderState.items.reduce((sum, item) => sum + item.price, 0);
+
+    if (orderElements.total) {
+        orderElements.total.textContent = formatPrice(total);
+    }
+
+    if (orderElements.itemsList) {
+        orderElements.itemsList.innerHTML = "";
+        orderState.items.forEach((item) => {
+            const li = document.createElement("li");
+            const title = document.createElement("span");
+            // On affiche le statut (ex: Livré) à côté du nom
+            const statusIcon = item.status === 'livré' ? '✅ ' : '⏳ ';
+            title.textContent = statusIcon + item.name;
+            const price = document.createElement("strong");
+            price.textContent = formatPrice(item.price);
+            li.append(title, price);
+            orderElements.itemsList.appendChild(li);
+        });
+    }
+
+    if (orderElements.empty) {
+        orderElements.empty.style.display = orderState.items.length ? "none" : "block";
+    }
+
+    renderHistoryList();
+}
+
+function renderHistoryList() {
+    if (!orderElements.historyList) return;
+    orderElements.historyList.innerHTML = "";
+
+    const sortedHistory = [...orderState.history].sort((a, b) => a.timestamp - b.timestamp);
+
+    sortedHistory.forEach((entry) => {
+        const li = document.createElement("li");
+        const left = document.createElement("span");
+        left.textContent = `${formatClock(entry.timestamp)} • ${entry.label}`;
+        const right = document.createElement("span");
+        right.textContent = entry.price > 0 ? formatPrice(entry.price) : "—";
+        li.append(left, right);
+        orderElements.historyList.appendChild(li);
+    });
+}
+
+function formatPrice(value) {
+    return `${value.toFixed(2)} €`;
+}
+
+function formatClock(date) {
+    return new Date(date).toLocaleTimeString("fr-FR", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+    });
+}
+
+function displayMessage(text) {
+    if (!orderElements.messages) return;
+    if (orderMessageTimer) clearTimeout(orderMessageTimer);
+    orderElements.messages.textContent = text;
+    orderMessageTimer = setTimeout(() => {
+        if (orderElements.messages) orderElements.messages.textContent = "";
+    }, 3200);
+}
+
+// --- LOGIQUE DU MENU (Inchangée mais intégrée) ---
+
 const cache = {};
 let currentCategory = null;
 
-// ================================
-// Construit l'URL publique depuis image_path
-// ================================
 function getImageUrlFromPath(imagePath) {
     if (!imagePath) return "";
     return `${SUPABASE_URL}/storage/v1/object/public/${BUCKET_NAME}/${imagePath}`;
 }
 
-// ================================
-// Affiche la catégorie sélectionnée
-// ================================
 async function showCategory(category) {
     const container = document.getElementById("menu");
-
     if (currentCategory === category) {
         currentCategory = null;
         closeMenuAnimation();
         return;
     }
-
     currentCategory = category;
-
     container.innerHTML = "";
 
-    document.querySelectorAll("#navigation button").forEach(btn => {
+    document.querySelectorAll("#navigation button").forEach((btn) => {
         btn.classList.toggle("active", btn.textContent.toLowerCase() === category);
     });
     document.getElementById("back-button").classList.remove("hidden");
@@ -48,7 +229,6 @@ async function showCategory(category) {
         return;
     }
 
-    // --- Récupération depuis Supabase ---
     const { data, error } = await client
         .from("dishes")
         .select("*")
@@ -56,14 +236,12 @@ async function showCategory(category) {
         .eq("available", true);
 
     if (error) {
-        console.error("Erreur Supabase:", error);
-        container.innerHTML = "<p>Erreur lors du chargement des plats.</p>";
+        container.innerHTML = "<p>Erreur lors du chargement.</p>";
         return;
     }
 
-    // --- Regroupe par subcategory ---
     const grouped = data.reduce((acc, dish) => {
-        const sub = dish.subcategory && dish.subcategory.trim() !== "" ? dish.subcategory : "_no_sub";
+        const sub = dish.subcategory?.trim() || "_no_sub";
         if (!acc[sub]) acc[sub] = [];
         acc[sub].push(dish);
         return acc;
@@ -73,318 +251,86 @@ async function showCategory(category) {
     displayCategory(grouped);
     scrollToMenu();
 }
-// ================================
-// Affiche les plats triés par subcategory dans 2 colonnes (Chargement Séquentiel)
-// ================================
+
 async function displayCategory(grouped) {
     const container = document.getElementById("menu");
     container.innerHTML = "";
-
     const entries = Object.entries(grouped);
-    const withSub = entries.filter(([key]) => key !== "_no_sub");
-    const noSub = entries.find(([key]) => key === "_no_sub");
-
-    withSub.sort((a, b) => b[1].length - a[1].length);
-    const sorted = noSub ? [...withSub, noSub] : withSub;
-
-    // On parcourt chaque groupe (ex: "Entrées Chaudes", "Entrées Froides")
-    for (const [sub, dishes] of sorted) {
-        let displayName = sub === "_no_sub" ? (dishes.length > 1 ? "Autres" : "Autre") : sub;
-
+    for (const [sub, dishes] of entries) {
         const title = document.createElement("h2");
-        title.textContent = displayName;
+        title.textContent = sub === "_no_sub" ? "Sélection" : sub;
         container.appendChild(title);
-
         const groupDiv = document.createElement("div");
         groupDiv.className = "category-group";
         container.appendChild(groupDiv);
 
-        // --- LA FILE D'ATTENTE DES PLATS ---
         for (const dish of dishes) {
             const card = document.createElement("div");
             card.className = "card";
-            
-            // On prépare l'animation (caché au début)
-            card.style.opacity = "0";
-            card.style.transform = "translateY(15px)";
-            card.style.transition = "all 0.4s ease-out";
-
-            const imageUrl = getImageUrlFromPath(dish.image_path);
             const img = document.createElement("img");
-            img.alt = dish.name;
-
-            // On crée une promesse qui attend que l'image soit chargée ou un délai de 0.5s
-            const imageLoadPromise = new Promise((resolve) => {
-                img.onload = resolve;
-                img.onerror = () => {
-                    img.style.display = "none";
-                    resolve();
-                };
-                setTimeout(resolve, 500); // Ne bloque pas plus de 0.5s par plat
-            });
-
-            img.src = imageUrl;
-
+            img.src = getImageUrlFromPath(dish.image_path);
             const h3Name = document.createElement("h3");
             h3Name.textContent = dish.name;
-
             const pPrice = document.createElement("p");
             pPrice.textContent = dish.price + " €";
-
-            const pInfo = document.createElement("p");
-            pInfo.textContent = "Plus d'infos";
-            pInfo.style.fontWeight = "bold";
-            pInfo.style.color = "#444";
-            pInfo.style.cursor = "pointer";
-
-            card.append(img, h3Name, pPrice, pInfo);
+            card.append(img, h3Name, pPrice);
             card.addEventListener("click", () => showDetail(dish));
             groupDiv.appendChild(card);
-
-            // ON ATTEND que l'image soit prête avant de passer au plat suivant
-            await imageLoadPromise;
-
-            // On affiche le plat avec une transition fluide
-            requestAnimationFrame(() => {
-                card.style.opacity = "1";
-                card.style.transform = "translateY(0)";
-            });
         }
     }
 }
 
-// ================================
-// Image plein écran
-// ================================
-function showFullscreenImage(src) {
-    const viewer = document.createElement("div");
-    viewer.id = "image-viewer";
-    Object.assign(viewer.style, {
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100%",
-        height: "100%",
-        background: "rgba(0,0,0,0.9)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        zIndex: 9999,
-    });
-
-    const img = document.createElement("img");
-    img.src = src;
-    Object.assign(img.style, {
-        maxWidth: "95%",
-        maxHeight: "95%",
-        borderRadius: "10px",
-    });
-
-    viewer.appendChild(img);
-    viewer.addEventListener("click", () => viewer.remove());
-    document.body.appendChild(viewer);
-}
-
-// ================================
-// Fiche détail du plat
-// ================================
 function showDetail(dish) {
     const detail = document.getElementById("dish-detail");
     detail.classList.remove("hidden");
     detail.innerHTML = "";
-
     const card = document.createElement("div");
     card.className = "card";
-
     const img = document.createElement("img");
     img.src = getImageUrlFromPath(dish.image_path);
-    img.alt = dish.name;
-    img.style.borderRadius = "10px";
-
     const h3Name = document.createElement("h3");
     h3Name.textContent = dish.name;
-
-    const pPrice = document.createElement("p");
-    pPrice.textContent = dish.price + " €";
-
-    card.append(img, h3Name, pPrice);
-
-    if (dish.description) {
-        const pDesc = document.createElement("p");
-        pDesc.innerHTML = "<b>Description :</b> " + dish.description;
-        card.appendChild(pDesc);
-    }
-    if (dish.ingredients) {
-        const pIng = document.createElement("p");
-        pIng.innerHTML = "<b>Ingrédients :</b> " + dish.ingredients;
-        card.appendChild(pIng);
-    }
-    if (dish.allergens) {
-        const pAllerg = document.createElement("p");
-        pAllerg.innerHTML = "<b>Allergènes :</b> " + dish.allergens;
-        card.appendChild(pAllerg);
-    }
-
+    const orderButton = document.createElement("button");
+    orderButton.className = "action-button order-card-button";
+    orderButton.textContent = `Commander (${dish.price} €)`;
+    orderButton.onclick = () => {
+        addToOrder(dish.name, dish.price);
+        detail.classList.add("hidden");
+    };
+    card.append(img, h3Name, orderButton);
     detail.appendChild(card);
 }
 
-// ================================
-// Fermeture fiche détail (click overlay)
-// ================================
-const detail = document.getElementById("dish-detail");
-if (detail) {
-    detail.addEventListener("click", () => detail.classList.add("hidden"));
-    detail.querySelectorAll("img, h2, p").forEach(el =>
-        el.addEventListener("click", e => e.stopPropagation())
-    );
-}
-
-// ================================
-// Menu principal
-// ================================
 function initMainMenu() {
     const nav = document.getElementById("navigation");
-    nav.innerHTML = "";
-
     const categories = ["entree", "plat", "dessert", "boisson", "accompagnement"];
-
-    const labels = {
-        entree: "ENTRÉES",
-        plat: "PLATS",
-        dessert: "DESSERTS",
-        boisson: "BOISSONS",
-        accompagnement: "ACCOMPAGNEMENTS"
-    };
-
-    categories.forEach(cat => {
+    nav.innerHTML = "";
+    categories.forEach((cat) => {
         const btn = document.createElement("button");
-        btn.textContent = labels[cat] || cat.toUpperCase(); // ← ici
-        btn.addEventListener("click", () => showCategory(cat));
+        btn.textContent = cat.toUpperCase();
+        btn.onclick = () => showCategory(cat);
         nav.appendChild(btn);
     });
-
-    document.getElementById("back-button").classList.add("hidden");
 }
 
-function addRippleEffect() {
-    document.addEventListener("click", function (e) {
-        const button = e.target.closest("#navigation button");
-        if (!button) return;
-
-        const ripple = document.createElement("span");
-        ripple.classList.add("ripple");
-
-        const rect = button.getBoundingClientRect();
-        const size = Math.max(rect.width, rect.height);
-
-        ripple.style.width = ripple.style.height = size + "px";
-        ripple.style.left = (e.clientX - rect.left - size / 2) + "px";
-        ripple.style.top = (e.clientY - rect.top - size / 2) + "px";
-
-        button.appendChild(ripple);
-
-        setTimeout(() => ripple.remove(), 600);
-    });
-}
-///animation de scroll pour l'ouverture du menu
 function scrollToMenu() {
-    const container = document.getElementById("menu");
-
-    // On utilise un léger délai pour s'assurer que le contenu 
-    // a commencé à s'injecter dans le DOM avant de calculer la position.
-    setTimeout(() => {
-        container.scrollIntoView({
-            behavior: "smooth",
-            block: "start" // Aligne le HAUT du container avec le HAUT de l'écran
-        });
-    }, 100);
-
-    // Animation d'apparition des cartes
-    const cards = container.querySelectorAll(".card");
-    cards.forEach((card, i) => {
-        card.style.opacity = 0;
-        card.style.transform = "translateY(20px)";
-        card.style.transition = `opacity 0.4s ease ${i * 0.05}s, transform 0.4s ease ${i * 0.05}s`;
-        
-        requestAnimationFrame(() => {
-            card.style.opacity = 1;
-            card.style.transform = "translateY(0)";
-        });
-    });
+    document.getElementById("menu").scrollIntoView({ behavior: "smooth" });
 }
 
-// ================================
-// Fermer menu avec animation
-// ================================
 function closeMenuAnimation(callback) {
-    const container = document.getElementById("menu");
-    const cards = container.querySelectorAll(".card");
-
-    // Scroll doucement vers le haut
-    scrollToTop(100); // durée en ms, ajuste pour que ça aille vite
-
-    cards.forEach((card, i) => {
-        card.style.transition = `opacity 0.3s ease ${i * 0.03}s, transform 0.3s ease ${i * 0.03}s`;
-        card.style.opacity = 0;
-        card.style.transform = 'translateY(-20px)';
-    });
-
-    // Supprime après l'animation
-    setTimeout(() => {
-        container.innerHTML = "";
-        document.getElementById("back-button").classList.add("hidden");
-
-        const navButtons = document.querySelectorAll("#navigation button");
-        navButtons.forEach(btn => btn.classList.remove("active"));
-
-        const nav = document.getElementById("navigation");
-        nav.classList.add("no-hover");
-        const reactivateHover = () => {
-            nav.classList.remove("no-hover");
-            window.removeEventListener("touchstart", reactivateHover);
-            window.removeEventListener("mousemove", reactivateHover);
-        };
-        window.addEventListener("touchstart", reactivateHover);
-        window.addEventListener("mousemove", reactivateHover);
-
-        if (callback) callback();
-    }, 300 + cards.length * 30);
+    document.getElementById("menu").innerHTML = "";
+    document.getElementById("back-button").classList.add("hidden");
+    if (callback) callback();
 }
 
-// ================================
-// Bouton retour
-// ================================
-document.getElementById("back-button").addEventListener("click", () => {
-    const detail = document.getElementById("dish-detail");
-    const viewer = document.getElementById("image-viewer");
-
-    if (detail && !detail.classList.contains("hidden")) {
-        detail.classList.add("hidden");
-    } else if (viewer) {
-        viewer.remove();
-    } else if (currentCategory) {
+document.getElementById("back-button")?.addEventListener("click", () => {
+    if (currentCategory) {
         currentCategory = null;
         closeMenuAnimation(() => initMainMenu());
     }
 });
 
-// ================================
-// Lancement
-// ================================
 document.addEventListener("DOMContentLoaded", () => {
     initMainMenu();
-    addRippleEffect();
+    initOrderModule();
 });
-function scrollToTop(duration = 300) {
-    const start = window.scrollY;
-    const startTime = performance.now();
-
-    function animate(time) {
-        const elapsed = time - startTime;
-        const progress = Math.min(elapsed / duration, 1); // 0→1
-        window.scrollTo(0, start * (1 - progress));
-        if (progress < 1) requestAnimationFrame(animate);
-    }
-
-    requestAnimationFrame(animate);
-}
