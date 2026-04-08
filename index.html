@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Le Grangousier - Commande Table</title>
+    <title>Menu - Le Grangousier</title>
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -12,57 +13,19 @@
     <div class="page">
         <div class="main-content">
             <div class="logo-text">Le grangousier</div>
+
             <h1>Notre Carte</h1>
+
             <div id="navigation"></div>
+
             <div id="menu"></div>
+
             <div id="dish-detail" class="hidden"></div>
         </div>
-
-        <div class="order-module">
-            <div class="order-panel-header">
-                <h3>Table <span id="table-id-display"></span></h3>
-                <p>Suivez votre commande en direct.</p>
-            </div>
-
-            <div class="order-actions">
-                <button id="call-waiter" class="primary">Appeler le serveur</button>
-                <button id="request-bill" class="secondary">Demander la note</button>
-            </div>
-
-            <div class="order-messages" id="order-messages"></div>
-
-            <div class="order-items">
-                <h4>Articles commandés</h4>
-                <ul id="order-items-list"></ul>
-                <div id="order-empty" class="muted">Aucune commande pour le moment.</div>
-            </div>
-        </div>
     </div>
 
-    <div class="order-bar" id="order-bar">
-        <div>
-            <span class="order-bar-label">Total actuel</span>
-            <strong id="order-total">0,00 €</strong>
-        </div>
-        <button id="order-history-toggle">Détails / Historique</button>
-    </div>
-
-    <div class="order-history hidden" id="order-history">
-        <div class="history-header">
-            <span>Historique complet</span>
-            <button id="close-history">Fermer</button>
-        </div>
-        <ul id="history-list"></ul>
-    </div>
-
-    <div id="back-button" class="hidden">← Retour</div>
+    <div id="back-button" class="hidden">RETOUR</div>
 
     <script src="app.js"></script>
-    <script>
-        // Petit script pour afficher le numéro de table dynamiquement
-        const num = new URLSearchParams(window.location.search).get('table') || '1';
-        document.getElementById('table-id-display').textContent = num;
-    </script>
-
 </body>
 </html>
